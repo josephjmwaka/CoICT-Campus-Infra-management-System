@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center my-4">
+        <h1 class="display-5 fw-bold">Welcome to College Infrastructure Management</h1>
+        <p class="lead">Easily report and track maintenance issues in your college.</p>
+    </div>
+
+    <!-- User Info Section -->
+    {% if user.is_authenticated %}
+    <div class="alert alert-success text-center">
+        <h4>Hello, {{ user.username }}! 👋</h4>
+        <p>You have reported <strong>{{ user.userprofile.badge_count }}</strong> issues.</p>
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center">
+        <p>Please <a href="{% url 'login' %}" class="fw-bold">log in</a> to report an issue.</p>
+    </div>
+    {% endif %}
+
+    <!-- Report an Issue -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Report an Issue</h5>
+                    <p class="card-text">Have you spotted any broken infrastructure? Report it here.</p>
+                    <a href="{% url 'report_issue' %}" class="btn btn-danger">Report Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Reported Issues -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">View Reported Issues</h5>
+                    <p class="card-text">Check the status of reported infrastructure issues.</p>
+                    <a href="{% url 'my_issues' %}" class="btn btn-primary">📌 my issues</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+  <!-- <div class="d-flex justify-content-end">
+    <a href="{% url 'my_issues' %}" class="btn btn-primary px-4 py-2" style="border-radius: 8px; font-weight: bold;">
+        📌 My Issues
+    </a>
+</div> -->
+
+
+
+
+</div>
+{% endblock %}

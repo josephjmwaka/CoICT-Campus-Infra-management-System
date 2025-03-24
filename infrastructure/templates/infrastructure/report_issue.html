@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Report an Issue{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📢 Report an Issue</h2>
+    
+    <div class="card p-4 shadow-lg">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="id_block_number" class="form-label">Block Number</label>
+                {{ form.block_number }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_floor_number" class="form-label">Floor Number</label>
+                {{ form.floor_number }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_room_number" class="form-label">Room Number</label>
+                {{ form.room_number }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_equipment_name" class="form-label">Equipment Name</label>
+                {{ form.equipment_name }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_problem_description" class="form-label">Problem</label>
+                {{ form.problem_description }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_equipment_count" class="form-label">Equipment Count</label>
+                {{ form.equipment_count }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_image" class="form-label">Upload Image (Optional)</label>
+                {{ form.image }}
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Submit Issue</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

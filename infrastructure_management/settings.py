@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,18 @@ INSTALLED_APPS = [
     'infrastructure',
     'accounts',
 ]
+JAZZMIN_SETTINGS = {
+    "site_title": "Infrastructure Admin",
+    "site_header": "College Infrastructure Management",
+    "welcome_sign": "Welcome to the Admin Dashboard",
+    "copyright": "© 2025 College Infrastructure",
+    "search_model": ["auth.User", "infrastructure.IssueReport"],
+    "user_avatar": None,
+    "theme": "darkly",
+}
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

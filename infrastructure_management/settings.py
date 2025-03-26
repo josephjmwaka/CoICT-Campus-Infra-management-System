@@ -16,7 +16,10 @@ import os
 
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+SESSION_COOKIE_AGE = 120  
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 

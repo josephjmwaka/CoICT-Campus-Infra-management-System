@@ -20,6 +20,13 @@ SESSION_COOKIE_AGE = 120
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('MAIL_HOST')  
+EMAIL_PORT = os.getenv('MAIL_PORT')
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('MAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('MAIL_HOST_PASSWORD')
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 

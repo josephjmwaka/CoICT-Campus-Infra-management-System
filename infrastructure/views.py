@@ -25,7 +25,7 @@ def report_issue(request):
                 subject="Issue Report Submitted",
                 message=f"Dear {request.user.username},\n\nYour issue report has been successfully submitted. Our team will review it soon.",
                 from_email=os.getenv('MAIL_HOST_USER'),
-                recipient_list=[request.user.email],
+                recipient_list=[os.getenv('MAIL_HOST_USER')], #valid email just for testing should be [request.user.email]
                 fail_silently=False,
             )
             return redirect("home")  # Redirect to home page after submission

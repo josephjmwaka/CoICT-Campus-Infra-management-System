@@ -60,9 +60,11 @@ JAZZMIN_SETTINGS = {
     "site_header": "College Infrastructure Management",
     "welcome_sign": "Welcome to the Admin Dashboard",
     "copyright": "© 2025 College Infrastructure",
+    "brand_name": "College Admin",
     "search_model": ["auth.User", "infrastructure.IssueReport"],
     "user_avatar": None,
     "theme": "darkly",
+    "show_ui_builder": False,
 }
 
 
@@ -151,6 +153,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Add this line
+
 
 
 # Default primary key field type

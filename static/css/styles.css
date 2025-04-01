@@ -7,3 +7,25 @@
     color: var(--color-gray);
     height: 2rem;
 }
+/* Ensure the entire page uses flexbox */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure it covers the full height */
+}
+
+/* Push the content to take up remaining space */
+.content {
+    flex: 1;
+    padding-bottom: 20px; /* Prevents content from touching the footer */
+}
+
+/* Footer Styling */
+.footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    width: 100%;
+    position: relative; /* Ensures it only appears at the bottom when needed */
+}

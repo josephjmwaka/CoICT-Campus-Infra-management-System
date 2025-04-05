@@ -16,7 +16,7 @@ import os
 
 load_dotenv()
 
-SESSION_COOKIE_AGE = 120  
+SESSION_COOKIE_AGE = 300 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
@@ -59,7 +59,7 @@ JAZZMIN_SETTINGS = {
     "site_title": "Infrastructure Admin",
     "site_header": "College Infrastructure Management",
     "welcome_sign": "Welcome to the Admin Dashboard",
-    "copyright": "© 2025 College Infrastructure",
+    "copyright": "College Infrastructure",
     "brand_name": "College Admin",
     "search_model": ["auth.User", "infrastructure.IssueReport"],
     "user_avatar": None,

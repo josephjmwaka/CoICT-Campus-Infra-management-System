@@ -2,50 +2,118 @@
 {% block title %}Report an Issue{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">📢 Report an Issue</h2>
-    
-    <div class="card p-4 shadow-lg">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <div class="mb-3">
-                <label for="id_block_number" class="form-label">Block Number</label>
-                {{ form.block_number }}
-            </div>
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-lg">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div class="icon-xl bg-danger bg-opacity-10 text-danger rounded-circle mb-3 mx-auto">
+                        <i class="bi bi-exclamation-triangle-fill fs-2"></i>
+                    </div>
+                    <h2 class="fw-bold">Report Infrastructure Issue</h2>
+                    <p class="text-muted">Help us maintain campus facilities by reporting problems</p>
+                </div>
 
-            <div class="mb-3">
-                <label for="id_floor_number" class="form-label">Floor Number</label>
-                {{ form.floor_number }}
-            </div>
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+                        <!-- Location Section -->
+                        <div class="col-md-4">
+                            <label for="id_block_number" class="form-label fw-medium">Block Number</label>
+                            {{ form.block_number }}
+                            <div class="invalid-feedback">
+                                Please specify the block number.
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="id_floor_number" class="form-label fw-medium">Floor</label>
+                            {{ form.floor_number }}
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="id_room_number" class="form-label fw-medium">Room</label>
+                            {{ form.room_number }}
+                        </div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="id_room_number" class="form-label">Room Number</label>
-                {{ form.room_number }}
-            </div>
+                    <!-- Equipment Section -->
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-8">
+                            <label for="id_equipment_name" class="form-label fw-medium">Equipment Name</label>
+                            {{ form.equipment_name }}
+                            <div class="invalid-feedback">
+                                Please specify the equipment.
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="id_equipment_count" class="form-label fw-medium">Quantity</label>
+                            {{ form.equipment_count }}
+                        </div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="id_equipment_name" class="form-label">Equipment Name</label>
-                {{ form.equipment_name }}
-            </div>
+                    <!-- Problem Description -->
+                    <div class="mt-3">
+                        <label for="id_problem_description" class="form-label fw-medium">Problem Description</label>
+                        {{ form.problem_description }}
+                        <div class="form-text">Be as specific as possible about the issue</div>
+                        <div class="invalid-feedback">
+                            Please describe the problem.
+                        </div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="id_problem_description" class="form-label">Problem</label>
-                {{ form.problem_description }}
-            </div>
+                    <!-- Image Upload -->
+                    <div class="mt-4">
+                        <label for="id_image" class="form-label fw-medium">Upload Image (Optional)</label>
+                        <div class="file-upload-wrapper">
+                            {{ form.image }}
+                            <label for="id_image" class="file-upload-label">
+                                <i class="bi bi-cloud-arrow-up me-2"></i>
+                                <span class="file-upload-text">Choose file or drag here</span>
+                            </label>
+                            <div class="form-text">Maximum file size: 5MB</div>
+                        </div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="id_equipment_count" class="form-label">Equipment Count</label>
-                {{ form.equipment_count }}
+                    <!-- Submit Button -->
+                    <div class="d-grid mt-5">
+                        <button type="submit" class="btn btn-danger py-3 fw-bold">
+                            <i class="bi bi-send-fill me-2"></i> Submit Issue Report
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label for="id_image" class="form-label">Upload Image (Optional)</label>
-                {{ form.image }}
-            </div>
-
-            <button type="submit" class="btn btn-success w-100">Submit Issue</button>
-        </form>
+        </div>
     </div>
 </div>
+
+<style>
+
+</style>
+
+<script>
+    // Form validation
+    (function() {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+    
+    // Show filename when file is selected
+    document.getElementById('id_image').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'No file chosen';
+        document.querySelector('.file-upload-text').textContent = fileName;
+    });
+</script>
 {% endblock %}

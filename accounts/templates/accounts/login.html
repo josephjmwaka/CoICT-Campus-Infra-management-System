@@ -1,29 +1,116 @@
-{% extends 'base.html' %}
-{% block title %}Login{% endblock %}
+{% extends 'base.html' %} {% block title %}Login{% endblock %} 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="text-center">Login</h2>
+<div class="row justify-content-center mt-5">
+  <div class="col-lg-4 col-md-6 col-sm-8">
+    <div class="card shadow">
+      <div class="card-body p-5">
+        <div class="text-center mb-4">
+          <h2 class="fw-bold">Welcome Back</h2>
+          <p class="text-muted">Please enter your credentials to login</p>
+        </div>
+
         {% if messages %}
-            <div class="alert alert-danger">
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            </div>
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          {% for message in messages %} {{ message }} {% endfor %}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
         {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" required>
+
+        <form method="post" class="needs-validation" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="form-control py-2"
+              placeholder="Enter your username"
+              required
+            />
+            <div class="invalid-feedback">Please enter your username.</div>
+          </div>
+          <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control py-2"
+                placeholder="Enter your password"
+                required
+              />
+              <button
+                class="btn btn-outline-secondary toggle-password"
+                type="button"
+              >
+                <i class="bi bi-eye"></i>
+              </button>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-            <a href="{% url 'register' %}" class="btn btn-link d-block text-center mt-2">Register</a>
+            <div class="invalid-feedback">Please enter your password.</div>
+          </div>
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary py-2 fw-bold">
+              Login
+            </button>
+          </div>
+
+          <div class="text-center">
+            <p class="text-muted mb-2">
+              Don't have an account?
+              <a href="{% url 'register' %}" class="text-decoration-none"
+                >Register</a
+              >
+            </p>
+            <a href="#" class="text-decoration-none small">Forgot password?</a>
+          </div>
         </form>
+      </div>
     </div>
+  </div>
 </div>
+
+<script>
+  // Toggle password visibility
+  document.querySelectorAll(".toggle-password").forEach(function (button) {
+    button.addEventListener("click", function () {
+      const passwordInput = this.previousElementSibling;
+      const type =
+        passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      this.querySelector("i").classList.toggle("bi-eye");
+      this.querySelector("i").classList.toggle("bi-eye-slash");
+    });
+  });
+
+  // Form validation
+  (function () {
+    "use strict";
+    var forms = document.querySelectorAll(".needs-validation");
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener(
+        "submit",
+        function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
 {% endblock %}
+
+

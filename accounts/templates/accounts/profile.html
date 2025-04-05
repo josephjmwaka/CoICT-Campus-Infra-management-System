@@ -1,21 +1,72 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-6 col-md-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="position-relative d-inline-block">
+                        <div class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 80px; height: 80px; font-size: 2rem;">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-1 border border-2 border-white"></span>
+                    </div>
+                    <h2 class="fw-bold mt-3 mb-1">{{ user.username }}</h2>
+                    <p class="text-muted">{{ user.email }}</p>
+                </div>
 
-<div class="container mt-5">
-  <h2 class="text-center">Your Profile</h2>
-  {% if messages %}
-  <div class="alert bg-primary">
-    {% for message in messages %} {{ message }} {% endfor %}
-  </div>
-  {% endif %}
-  <div class="card p-4 shadow-sm">
-    <p><strong>Username:</strong> {{ user.username }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>First Name:</strong> {{ user.first_name }}</p>
-    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-    <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
-    <a href="{% url 'change_password' %}" class="btn btn-warning"
-      >Change Password</a
-    >
-  </div>
+                {% if messages %}
+                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    {% for message in messages %}
+                    {{ message }}
+                    {% endfor %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+
+                <div class="profile-details mb-4">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item py-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">First Name</span>
+                                <span>{{ user.first_name|default:"Not specified" }}</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item py-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Last Name</span>
+                                <span>{{ user.last_name|default:"Not specified" }}</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item py-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Email</span>
+                                <span>{{ user.email }}</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item py-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Account Created</span>
+                                <span>{{ user.date_joined|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary py-2">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                    </a>
+                    <a href="{% url 'change_password' %}" class="btn btn-outline-primary py-2">
+                        <i class="bi bi-shield-lock me-2"></i>Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 {% endblock %}

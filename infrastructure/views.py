@@ -10,7 +10,13 @@ load_dotenv()
 
 def home(request):
     infrastructures = IssueReport.objects.all()
-    return render(request, 'infrastructure/home.html', {'infrastructures': infrastructures})
+    if request.user.is_authenticated:
+        user_reports = IssueReport.objects.filter(reported_by=request.user)
+        fixed_reports = IssueReport.objects.filter(reported_by=request.user, status='Fixed')
+        progress_reports = IssueReport.objects.filter(reported_by=request.user, status='In Progress')
+        return render(request, 'infrastructure/home.html', {'infrastructures': infrastructures, 'user_reports': user_reports, 'progress_reports': progress_reports, 'fixed_reports': fixed_reports})
+    else:
+        return render(request, 'infrastructure/home.html', {'infrastructures': infrastructures})
 
 
 @login_required

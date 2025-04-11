@@ -56,15 +56,44 @@ INSTALLED_APPS = [
     'accounts',
 ]
 JAZZMIN_SETTINGS = {
-    "site_title": "Infrastructure Admin",
-    "site_header": "College Infrastructure Management",
-    "welcome_sign": "Welcome to the Admin Dashboard",
-    "copyright": "College Infrastructure",
-    "brand_name": "College Admin",
-    "search_model": ["auth.User", "infrastructure.IssueReport"],
-    "user_avatar": None,
-    "theme": "darkly",
-    "show_ui_builder": False,
+        # General theming
+    "site_title": "College Infrastructure Admin",
+    "site_header": "College Infrastructure",
+    "site_brand": "College Infrastructure",
+    "site_logo": "images/logo.png",
+    "login_logo": "images/logo.png",
+    "site_logo_classes": "img-circle",
+    
+    # CSS classes that are applied to the logo above
+    "site_icon": "images/avatar.svg",
+    
+    # Welcome text on the login screen
+    "welcome_sign": "Welcome to College Infrastructure Management",
+    
+    # Copyright on the footer
+    "copyright": "College Infrastructure Management",
+    
+    # UI theming
+    "custom_css": "css/admin-custom.css",
+    
+    # Change view settings to match your theme
+    "theme": "default",
+    
+    # UI tweaks
+    "show_ui_builder": True,
+    
+    # Related modal adjustment
+    "related_modal_active": True,
+    
+    # Custom icons
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+        'custom_template': {
+        'login': 'admin/login.html',
+    }
 }
 
 

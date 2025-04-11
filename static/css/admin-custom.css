@@ -1,0 +1,124 @@
+/* Main admin theming */
+:root {
+  --primary: #4e73df;
+  --secondary: #858796;
+  --success: #1cc88a;
+  --info: #36b9cc;
+  --warning: #f6c23e;
+  --danger: #e74a3b;
+  --light: #f8f9fc;
+  --dark: #5a5c69;
+}
+
+/* Login page specific */
+.login-page {
+  background-color: #f8f9fc;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 500px;
+}
+
+.login-logo {
+  font-size: 2.1rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+.login-card {
+  border: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.login-card-body {
+  padding: 2rem;
+}
+
+/* Form controls */
+.form-control {
+  border-radius: 0.35rem;
+  border: 1px solid #d1d3e2;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: #2e59d9;
+  border-color: #2653d4;
+}
+
+/* Navbar theming */
+.navbar-white {
+  background-color: #0a66ff !important;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+/* Sidebar theming */
+.sidebar-dark-primary {
+  background-color: var(--dark) !important;
+}
+
+.sidebar-dark-primary .nav-header {
+    color: #9e9e9e !important; /* Gray for section titles */
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    font-weight: bold;
+}
+
+
+/* ========================
+   ADMIN HEADER & LOGO 
+======================== */
+/* Logo container */
+.brand-link {
+    background-color: #0a66ff !important; /* Match your theme */
+}
+/* Logo image */
+.brand-image {
+    height: 33px !important;
+    width: auto !important;
+    margin-left: 0.5rem !important;
+    opacity: 1 !important;
+    filter: none !important; /* Remove default grayscale */
+    background-color: #0a66ff;
+}
+/* Logo text */
+.brand-text {
+    font-weight: bold !important;
+    transition: color 0.3s ease !important;
+}
+
+/* Hover effects */
+.brand-link:hover .brand-image {
+    transform: scale(1.05) !important;
+}
+.brand-link:hover .brand-text {
+    color: var(--light) !important;
+}
+
+/* Header title (site_header) */
+.main-header .navbar-brand {
+    display: none !important; /* Hide if using logo instead */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .brand-text {
+        font-size: 1.1rem !important;
+    }
+    .brand-image {
+        height: 30px !important;
+    }
+}
+

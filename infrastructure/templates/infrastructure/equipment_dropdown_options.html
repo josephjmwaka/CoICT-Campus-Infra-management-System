@@ -1,0 +1,4 @@
+<option value="">Select Equipment</option>
+{% for item in equipment %}
+<option value="{{ item.id }}">{{ item.name }}{% if item.model_number %} ({{ item.model_number }}){% endif %}</option>
+{% endfor %}

@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from .models import UserProfile
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
@@ -37,3 +38,8 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
+        
+class UserProfileExtendedForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['profile_photo', 'phone_number', 'department']

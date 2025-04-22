@@ -1,116 +1,521 @@
-{% extends 'base.html' %}
-{% block title %}Report an Issue{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center mt-4">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-lg">
-            <div class="card-body p-5">
-                <div class="text-center mb-4">
-                    <div class="icon-xl bg-danger bg-opacity-10 text-danger rounded-circle mb-3 mx-auto">
-                        <i class="bi bi-exclamation-triangle-fill fs-2"></i>
-                    </div>
-                    <h2 class="fw-bold">Report Infrastructure Issue</h2>
-                    <p class="text-muted">Help us maintain campus facilities by reporting problems</p>
-                </div>
-
-                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-                    {% csrf_token %}
-                    
-                    <div class="row g-3">
-                        <!-- Location Section -->
-                        <div class="col-md-4">
-                            <label for="id_block_number" class="form-label fw-medium">Block Number</label>
-                            {{ form.block_number }}
-                            <div class="invalid-feedback">
-                                Please specify the block number.
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <label for="id_floor_number" class="form-label fw-medium">Floor</label>
-                            {{ form.floor_number }}
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <label for="id_room_number" class="form-label fw-medium">Room</label>
-                            {{ form.room_number }}
-                        </div>
-                    </div>
-
-                    <!-- Equipment Section -->
-                    <div class="row g-3 mt-2">
-                        <div class="col-md-8">
-                            <label for="id_equipment_name" class="form-label fw-medium">Equipment Name</label>
-                            {{ form.equipment_name }}
-                            <div class="invalid-feedback">
-                                Please specify the equipment.
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <label for="id_equipment_count" class="form-label fw-medium">Quantity</label>
-                            {{ form.equipment_count }}
-                        </div>
-                    </div>
-
-                    <!-- Problem Description -->
-                    <div class="mt-3">
-                        <label for="id_problem_description" class="form-label fw-medium">Problem Description</label>
-                        {{ form.problem_description }}
-                        <div class="form-text">Be as specific as possible about the issue</div>
-                        <div class="invalid-feedback">
-                            Please describe the problem.
-                        </div>
-                    </div>
-
-                    <!-- Image Upload -->
-                    <div class="mt-4">
-                        <label for="id_image" class="form-label fw-medium">Upload Image (Optional)</label>
-                        <div class="file-upload-wrapper">
-                            {{ form.image }}
-                            <label for="id_image" class="file-upload-label">
-                                <i class="bi bi-cloud-arrow-up me-2"></i>
-                                <span class="file-upload-text">Choose file or drag here</span>
-                            </label>
-                            <div class="form-text">Maximum file size: 5MB</div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="d-grid mt-5">
-                        <button type="submit" class="btn btn-danger py-3 fw-bold">
-                            <i class="bi bi-send-fill me-2"></i> Submit Issue Report
-                        </button>
-                    </div>
-                </form>
+{% extends 'base.html' %} {% block title %}Report an Issue{% endblock %} {% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card border-0 shadow-lg">
+        <div class="card-header bg-white border-0 py-3">
+          <div class="d-flex align-items-center justify-content-center">
+            <div
+              class="icon-lg bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center me-3"
+            >
+              <i class="bi bi-exclamation-triangle-fill fs-4"></i>
             </div>
+            <div>
+              <h2 class="fw-bold mb-1">Report Maintenance Issue</h2>
+              <p class="text-muted mb-0">
+                Help us maintain campus facilities by reporting problems
+              </p>
+            </div>
+          </div>
         </div>
+
+        <div class="card-body p-4 p-md-5">
+          <form
+            method="post"
+            id="maintenanceForm"
+            class="needs-validation"
+            novalidate
+          >
+            {% csrf_token %}
+
+            <!-- Location Section -->
+            <div class="mb-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-geo-alt-fill text-primary me-2 fs-5"></i>
+                <h5 class="fw-semibold mb-0 text-primary">Location Details</h5>
+              </div>
+              <div class="card border-0 bg-light-subtle">
+                <div class="card-body p-4">
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="id_block" class="form-label fw-medium"
+                          >Block*</label
+                        >
+                        <select
+                          name="block"
+                          id="id_block"
+                          class="form-select"
+                          required
+                        >
+                          <option value="" selected disabled>
+                            Select a Block
+                          </option>
+                          {% for block in blocks %}
+                          <option
+                            value="{{ block.id }}"
+                            data-has-floors="{{ block.has_multiple_floors|yesno:'true,false' }}"
+                          >
+                            Block {{ block.code }}
+                          </option>
+                          {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                          Please select a block.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="id_floor" class="form-label fw-medium"
+                          >Floor</label
+                        >
+                        <select
+                          name="floor"
+                          id="id_floor"
+                          class="form-select"
+                          disabled
+                        >
+                          <option value="" selected disabled>
+                            Select a Floor
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="id_room" class="form-label fw-medium"
+                          >Room*</label
+                        >
+                        <select
+                          name="room"
+                          id="id_room"
+                          class="form-select"
+                          required
+                          disabled
+                        >
+                          <option value="" selected disabled>
+                            Select a Room
+                          </option>
+                        </select>
+                        <div class="invalid-feedback">
+                          Please select a room.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Equipment Section -->
+            <div class="mb-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-tools text-primary me-2 fs-5"></i>
+                <h5 class="fw-semibold mb-0 text-primary">Equipment Details</h5>
+              </div>
+              <div class="card border-0 bg-light-subtle">
+                <div class="card-body p-4">
+                  <div class="form-group">
+                    <label for="id_equipment" class="form-label fw-medium"
+                      >Equipment (if applicable)</label
+                    >
+                    <select
+                      name="equipment"
+                      id="id_equipment"
+                      class="form-select"
+                      disabled
+                    >
+                      <option value="" selected disabled>
+                        Select Equipment
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Issue Details Section -->
+            <div class="mb-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-info-circle-fill text-primary me-2 fs-5"></i>
+                <h5 class="fw-semibold mb-0 text-primary">Issue Details</h5>
+              </div>
+              <div class="card border-0 bg-light-subtle">
+                <div class="card-body p-4">
+                  <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label
+                          for="{{ form.issue_type.id_for_label }}"
+                          class="form-label fw-medium"
+                          >Issue Type*</label
+                        >
+                        {{ form.issue_type }}
+                        <div class="invalid-feedback">
+                          {{ form.issue_type.errors|striptags }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label
+                          for="{{ form.priority.id_for_label }}"
+                          class="form-label fw-medium"
+                          >Priority*</label
+                        >
+                        {{ form.priority }}
+                        <div class="invalid-feedback">
+                          {{ form.priority.errors|striptags }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mb-4">
+                    <div class="form-group">
+                      <label
+                        for="{{ form.title.id_for_label }}"
+                        class="form-label fw-medium"
+                        >Title*</label
+                      >
+                      {{ form.title }}
+                      <div class="invalid-feedback">
+                        {{ form.title.errors|striptags }}
+                      </div>
+                      <div class="form-text mt-1">
+                        Brief summary of the problem (max 100 characters)
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <div class="form-group">
+                      <label
+                        for="{{ form.description.id_for_label }}"
+                        class="form-label fw-medium"
+                        >Description</label
+                      >
+                      {{ form.description }}
+                      <div class="d-flex justify-content-between mt-1">
+                        <div class="form-text">
+                          Provide additional details (optional)
+                        </div>
+                        <div class="form-text text-end" id="charCounter">
+                          0/500
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="mt-4">
+              <label for="id_image" class="form-label fw-medium"
+                >Upload Image (Optional)</label
+              >
+              <div class="file-upload-wrapper">
+                {{ form.image }}
+                <label for="id_image" class="file-upload-label">
+                  <i class="bi bi-cloud-arrow-up me-2"></i>
+                  <span class="file-upload-text">Choose file or drag here</span>
+                </label>
+                <div class="form-text">Maximum file size: 5MB</div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-danger btn-lg py-3 fw-bold">
+                <i class="bi bi-send-fill me-2"></i> Submit Maintenance Request
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <style>
+  /* Enhanced Professional Styling */
+  .card {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: none;
+  }
 
+  .card.bg-light-subtle {
+    background-color: rgba(248, 249, 250, 0.7);
+    backdrop-filter: blur(10px);
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .form-control,
+  .form-select {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-size: 0.95rem;
+    background-color: #fff;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 0.2rem rgba(74, 108, 247, 0.15);
+    outline: none;
+  }
+
+  select.form-control,
+  select.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+  }
+
+  textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .invalid-feedback {
+    font-size: 0.85rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+  }
+
+  .form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+
+  #charCounter {
+    font-size: 0.8rem;
+  }
+
+  .icon-lg {
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+  }
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+  $(document).ready(function () {
+    // Initialize form fields with proper classes
+    $("#{{ form.issue_type.id_for_label }}").addClass("form-select");
+    $("#{{ form.priority.id_for_label }}").addClass("form-select");
+    $("#{{ form.title.id_for_label }}").addClass("form-control");
+    $("#{{ form.description.id_for_label }}").addClass("form-control");
+
+    // Character counter for description
+    $("#{{ form.description.id_for_label }}").on("input", function () {
+      const currentLength = $(this).val().length;
+      $("#charCounter").text(currentLength + "/500");
+    });
+
+    // Load floors when block is changed
+    $("#id_block").change(function () {
+      const blockId = $(this).val();
+      const hasFloors =
+        $(this).find(":selected").attr("data-has-floors") === "true";
+      const floorSelect = $("#id_floor");
+      const roomSelect = $("#id_room");
+      const equipmentSelect = $("#id_equipment");
+
+      // Reset dependent fields
+      floorSelect
+        .html('<option value="" selected disabled>Select a Floor</option>')
+        .prop("disabled", true);
+      roomSelect
+        .html('<option value="" selected disabled>Select a Room</option>')
+        .prop("disabled", true);
+      equipmentSelect
+        .html('<option value="" selected disabled>Select Equipment</option>')
+        .prop("disabled", true);
+
+      if (!blockId) {
+        return;
+      }
+
+      // Enable/disable floor based on block type
+      if (hasFloors) {
+        floorSelect.prop("disabled", false);
+
+        // Load floors for this block
+        $.ajax({
+          url: "{% url 'ajax_load_floors' %}",
+          data: { block: blockId },
+          success: function (response) {
+            if (response && response.html) {
+              floorSelect.html(response.html).prop("disabled", false);
+            } else {
+              console.error("Invalid response format:", response);
+              floorSelect.html(
+                '<option value="" selected disabled>No floors available</option>'
+              );
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("AJAX Error - Status:", status);
+            console.error("Error:", error);
+            console.error("Full response:", xhr.responseText);
+            floorSelect.html(
+              '<option value="" selected disabled>Error loading floors</option>'
+            );
+          },
+        });
+      } else {
+        // For blocks without floors, load rooms directly
+        loadRooms(blockId, null);
+      }
+    });
+
+    // Load rooms when floor is changed
+    $("#id_floor").change(function () {
+      const blockId = $("#id_block").val();
+      const floorId = $(this).val();
+
+      if (blockId && floorId) {
+        loadRooms(blockId, floorId);
+      } else {
+        $("#id_room")
+          .html('<option value="" selected disabled>Select a Room</option>')
+          .prop("disabled", true);
+        $("#id_equipment")
+          .html('<option value="" selected disabled>Select Equipment</option>')
+          .prop("disabled", true);
+      }
+    });
+
+    // Load equipment when room is changed
+    $("#id_room").change(function () {
+      const roomId = $(this).val();
+      const equipmentSelect = $("#id_equipment");
+
+      if (!roomId) {
+        equipmentSelect
+          .html('<option value="" selected disabled>Select Equipment</option>')
+          .prop("disabled", true);
+        return;
+      }
+
+      $.ajax({
+        url: "{% url 'ajax_load_equipment' %}",
+        data: { room: roomId },
+        success: function (response) {
+          if (response && response.html) {
+            equipmentSelect.html(response.html).prop("disabled", false);
+          } else {
+            equipmentSelect
+              .html(
+                '<option value="" selected disabled>No equipment available</option>'
+              )
+              .prop("disabled", false);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error loading equipment:", error);
+          equipmentSelect.html(
+            '<option value="" selected disabled>Error loading equipment</option>'
+          );
+        },
+      });
+    });
+
+    function loadRooms(blockId, floorId) {
+      const roomSelect = $("#id_room");
+      const equipmentSelect = $("#id_equipment");
+
+      $.ajax({
+        url: "{% url 'ajax_load_rooms' %}",
+        data: {
+          block: blockId,
+          floor: floorId || "",
+        },
+        success: function (response) {
+          if (response && response.html) {
+            roomSelect.html(response.html).prop("disabled", false);
+            equipmentSelect
+              .html(
+                '<option value="" selected disabled>Select Equipment</option>'
+              )
+              .prop("disabled", true);
+          } else {
+            roomSelect
+              .html(
+                '<option value="" selected disabled>No rooms available</option>'
+              )
+              .prop("disabled", false);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error loading rooms:", error);
+          roomSelect.html(
+            '<option value="" selected disabled>Error loading rooms</option>'
+          );
+        },
+      });
+    }
+
     // Form validation
-    (function() {
-        'use strict'
-        var forms = document.querySelectorAll('.needs-validation')
-        Array.prototype.slice.call(forms)
-            .forEach(function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })()
-    
-    // Show filename when file is selected
+    (function () {
+      "use strict";
+      var forms = document.querySelectorAll(".needs-validation");
+      Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener(
+          "submit",
+          function (event) {
+            // Make description not required
+            form
+              .querySelector("#{{ form.description.id_for_label }}")
+              .removeAttribute("required");
+
+            if (!form.checkValidity()) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add("was-validated");
+          },
+          false
+        );
+      });
+    })();
+  });
+  // Show filename when file is selected
     document.getElementById('id_image').addEventListener('change', function(e) {
         const fileName = e.target.files[0]?.name || 'No file chosen';
         document.querySelector('.file-upload-text').textContent = fileName;

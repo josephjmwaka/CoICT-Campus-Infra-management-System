@@ -1,9 +1,12 @@
-{% extends 'base.html' %} {% block title %}My Reported Issues{% endblock %} {% block content %}
+{% extends 'base.html' %} 
+{% block title %}My Reported Issues{% endblock %} 
+
+{% block content %}
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-0">My Reported Issues</h2>
+    <h2 class="fw-bold mb-0">My Maintenance Requests</h2>
     <a href="{% url 'report_issue' %}" class="btn btn-primary">
-      <i class="bi bi-plus-circle me-2"></i>Report New Issue
+      <i class="bi bi-plus-circle me-2"></i>New Request
     </a>
   </div>
 
@@ -15,10 +18,9 @@
           <thead class="table-light">
             <tr>
               <th class="ps-4">ID</th>
-              <th>Image</th>
               <th>Location</th>
-              <th>Equipment</th>
-              <th>Description</th>
+              <th>Issue</th>
+              <th>Priority</th>
               <th>Status</th>
               <th class="text-end pe-4">Reported</th>
             </tr>
@@ -26,61 +28,54 @@
           <tbody>
             {% for issue in issues %}
             <tr>
-              <td class="ps-4 fw-semibold">#{{ forloop.counter }}</td>
-              <td>
-                <div class="issue-thumbnail">
-                  <img
-                    src="{{ issue.image.url }}"
-                    alt="Issue image"
-                    class="rounded"
-                    loading="lazy"
-                  />
-                </div>
-              </td>
+              <td class="ps-4 fw-semibold">#{{ issue.id }}</td>
               <td>
                 <div class="d-flex flex-column">
-                  <span class="fw-medium">Block {{ issue.block_number }}</span>
-               <small class="text-muted">
-    {% if issue.floor_number %}
-        <span class="me-1">Floor {{ issue.floor_number }}</span>
-    {% endif %}
-    {% if issue.room_number %}
-        <span>Room {{ issue.room_number }}</span>
-    {% endif %}
-    {% if not issue.floor_number and not issue.room_number %}
-        <span>Location not specified</span>
-    {% endif %}
-</small>
+                  <span class="fw-medium">{{ issue.block.code }}{% if issue.room %}{{ issue.room.number }}{% endif %}</span>
+                  <small class="text-muted">
+                    {% if issue.floor %}Floor {{ issue.floor.number }}{% endif %}
+                    {% if issue.room %}{{ issue.room.name }}{% endif %}
+                  </small>
                 </div>
               </td>
               <td>
-                <span class="fw-medium">{{ issue.equipment_name }}</span>
-                <small class="d-block text-muted"
-                  >Qty: {{ issue.equipment_count }}</small
-                >
-              </td>
-              <td class="text-truncate" style="max-width: 200px">
-                {{ issue.problem_description }}
+                <span class="fw-medium">{{ issue.title }}</span>
+                <small class="d-block text-muted text-truncate" style="max-width: 200px">
+                  {{ issue.description }}
+                </small>
               </td>
               <td>
-                {% if issue.status == 'Fixed' %}
-                <span class="badge bg-success bg-opacity-10 text-success">
-                  <i class="bi bi-check-circle-fill me-1"></i> Resolved
+                {% if issue.priority == 'HIGH' or issue.priority == 'CRIT' %}
+                <span class="badge bg-danger bg-opacity-10 text-danger">
+                  {{ issue.get_priority_display }}
                 </span>
-                {% elif issue.status == 'In Progress' %}
+                {% elif issue.priority == 'MED' %}
+                <span class="badge bg-warning bg-opacity-10 text-warning">
+                  {{ issue.get_priority_display }}
+                </span>
+                {% else %}
+                <span class="badge bg-success bg-opacity-10 text-success">
+                  {{ issue.get_priority_display }}
+                </span>
+                {% endif %}
+              </td>
+              <td>
+                {% if issue.status == 'COMPLETED' %}
+                <span class="badge bg-success bg-opacity-10 text-success">
+                  <i class="bi bi-check-circle-fill me-1"></i> Completed
+                </span>
+                {% elif issue.status == 'IN_PROGRESS' %}
                 <span class="badge bg-primary bg-opacity-10 text-primary">
                   <i class="bi bi-gear-fill me-1"></i> In Progress
                 </span>
                 {% else %}
-                <span class="badge bg-warning bg-opacity-10 text-warning">
-                  <i class="bi bi-hourglass-split me-1"></i> Pending
+                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                  <i class="bi bi-hourglass-split me-1"></i> {{ issue.get_status_display }}
                 </span>
                 {% endif %}
               </td>
               <td class="text-end pe-4">
-                <small class="text-muted"
-                  >{{ issue.created_at|date:"M d, Y" }}</small
-                >
+                <small class="text-muted">{{ issue.created_at|date:"M d, Y" }}</small>
                 <div class="text-muted" style="font-size: 0.75rem">
                   {{ issue.created_at|time }}
                 </div>
@@ -94,18 +89,18 @@
   </div>
 
   <div class="d-flex justify-content-between align-items-center mt-3">
-  <div class="text-muted">
-    Showing <strong>{{ issues|length }}</strong> 
-    {% if issues|length == 1 %}issue{% else %}issues{% endif %}
-</div>
+    <div class="text-muted">
+      Showing <strong>{{ issues|length }}</strong> 
+      {% if issues|length == 1 %}request{% else %}requests{% endif %}
+    </div>
   </div>
   {% else %}
   <div class="card border-0 shadow-sm text-center py-5">
     <div class="card-body">
       <i class="bi bi-clipboard-x text-muted" style="font-size: 3rem"></i>
-      <h4 class="mt-3 mb-2">No Issues Reported</h4>
+      <h4 class="mt-3 mb-2">No Maintenance Requests</h4>
       <p class="text-muted mb-4">
-        You haven't reported any infrastructure issues yet.
+        You haven't reported any maintenance issues yet.
       </p>
       <a href="{% url 'report_issue' %}" class="btn btn-primary px-4">
         <i class="bi bi-plus-circle me-2"></i>Report Your First Issue
@@ -114,5 +109,4 @@
   </div>
   {% endif %}
 </div>
-
 {% endblock %}

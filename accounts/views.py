@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import UserRegistrationForm, UserProfileForm
+from .forms import UserRegistrationForm, UserProfileForm, UserProfileExtendedForm
+from .models import UserProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
@@ -12,6 +13,8 @@ def login_view(request):
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user:
+            # Ensure profile exists before accessing it
+            UserProfile.objects.get_or_create(user=user)
             login(request, user)
             return redirect('home')
         else:
@@ -53,14 +56,24 @@ def change_password(request):
 
 @login_required
 def edit_profile(request):
-    """Allow users to edit their profile."""
     if request.method == "POST":
-        form = UserProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
+        user_form = UserProfileForm(request.POST, instance=request.user)
+        profile_form = UserProfileExtendedForm(
+            request.POST, 
+            request.FILES, 
+            instance=request.user.profile
+        )
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
             messages.success(request, "Profile updated successfully!")
             return redirect("profile")
     else:
-        form = UserProfileForm(instance=request.user)
+        user_form = UserProfileForm(instance=request.user)
+        profile_form = UserProfileExtendedForm(instance=request.user.profile)
 
-    return render(request, "accounts/edit_profile.html", {"form": form})
+    return render(request, "accounts/edit_profile.html", {
+        "user_form": user_form,
+        "profile_form": profile_form
+    })

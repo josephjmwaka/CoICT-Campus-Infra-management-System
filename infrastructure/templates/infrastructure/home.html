@@ -1,25 +1,47 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content %}
-{% load static %}
+{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content %} {% load static %}
 <div class="container py-5">
   <!-- Hero Section -->
+  {% if messages %}
+  <div
+    class="alert alert-primary alert-dismissible fade show mb-4"
+    role="alert"
+  >
+    {% for message in messages %} {{ message }} {% endfor %}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endif %}
   <div class="text-center mb-5">
     <h1 class="display-5 fw-bold text-primary mb-3">
       College Infrastructure Management
     </h1>
     <p class="lead text-muted fs-4">
-      Streamlined maintenance reporting for campus facilities
+      Comprehensive maintenance tracking for campus facilities
     </p>
 
     {% if user.is_authenticated %}
     <div class="d-flex justify-content-center align-items-center mt-4">
       <div class="position-relative me-3">
+        {% if user.profile.profile_photo %}
         <img
-          src="{% static 'images/avatar.svg' %}"
+          src="{{ user.profile.profile_photo.url }}"
           width="60"
           height="60"
           class="rounded-circle border border-3 border-primary"
           alt="Profile"
         />
+        {% else %}
+        <div
+          class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+          style="width: 60px; height: 60px; font-size: 1.5rem"
+        >
+          {{ user.username|first|upper }}
+        </div>
+        {% endif %}
         <span
           class="position-absolute bottom-0 end-0 bg-success rounded-circle p-1 border border-2 border-white"
         ></span>
@@ -28,9 +50,9 @@
         <h4 class="mb-0">Hello, {{ user.username }}!</h4>
         <p class="text-muted mb-0">
           <span class="badge bg-primary rounded-pill"
-            >{{ user.userprofile.badge_count }}</span
+            >{{ user_requests.count }}</span
           >
-          issues reported
+          maintenance requests
         </p>
       </div>
     </div>
@@ -84,16 +106,16 @@
           >
             <i class="bi bi-list-check fs-3"></i>
           </div>
-          <h3 class="h4 mb-3">Track Your Reports</h3>
+          <h3 class="h4 mb-3">Track Your Requests</h3>
           <p class="text-muted mb-4">
-            Monitor the status of your submitted issues and see their resolution
-            progress.
+            Monitor the status of your submitted maintenance requests and see
+            their resolution progress.
           </p>
           <a
             href="{% url 'my_issues' %}"
             class="btn btn-primary px-4 py-2 stretched-link"
           >
-            <i class="bi bi-eye me-2"></i>View My Issues
+            <i class="bi bi-eye me-2"></i>View My Requests
           </a>
         </div>
       </div>
@@ -106,18 +128,18 @@
     <div class="col-12">
       <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
-          <h4 class="mb-4">Your Reporting Activity</h4>
+          <h4 class="mb-4">Your Maintenance Activity</h4>
           <div class="row text-center">
             <div class="col-md-4 border-end">
-              <h2 class="text-primary">{{ user_reports|length }}</h2>
-              <p class="text-muted mb-0">Total Reports</p>
+              <h2 class="text-primary">{{ user_requests.count }}</h2>
+              <p class="text-muted mb-0">Total Requests</p>
             </div>
             <div class="col-md-4 border-end">
-              <h2 class="text-success">{{ fixed_reports|length }}</h2>
-              <p class="text-muted mb-0">Resolved</p>
+              <h2 class="text-success">{{ completed_requests.count }}</h2>
+              <p class="text-muted mb-0">Completed</p>
             </div>
             <div class="col-md-4">
-              <h2 class="text-warning">{{ progress_reports|length }}</h2>
+              <h2 class="text-warning">{{ in_progress_requests.count }}</h2>
               <p class="text-muted mb-0">In Progress</p>
             </div>
           </div>
@@ -127,5 +149,4 @@
   </div>
   {% endif %}
 </div>
-
 {% endblock %}

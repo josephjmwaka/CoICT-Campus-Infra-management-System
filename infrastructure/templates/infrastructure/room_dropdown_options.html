@@ -1,0 +1,4 @@
+<option value="">Select a Room</option>
+{% for room in rooms %}
+<option value="{{ room.id }}">Room {{ room.number }}{% if room.name %} - {{ room.name }}{% endif %}</option>
+{% endfor %}

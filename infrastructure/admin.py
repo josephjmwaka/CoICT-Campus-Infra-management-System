@@ -80,18 +80,18 @@ class EquipmentAdmin(admin.ModelAdmin):
     list_filter = ['category', 'status', 'room__block']
     search_fields = ['name', 'model_number', 'serial_number']
     list_select_related = ['category', 'room', 'room__block']
-    readonly_fields = ['equipment_image']
+    # readonly_fields = ['equipment_image']
     
     def room_location(self, obj):
         return f"{obj.room.block.code}{obj.room.number}"
     room_location.short_description = "Location"
     room_location.admin_order_field = 'room__number'
     
-    def equipment_image(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" width="150" />', obj.image.url)
-        return "-"
-    equipment_image.short_description = "Image Preview"
+    # def equipment_image(self, obj):
+    #     if obj.image:
+    #         return format_html('<img src="{}" width="150" />', obj.image.url)
+    #     return "-"
+    # equipment_image.short_description = "Image Preview"
 
 @admin.register(Generator)
 class GeneratorAdmin(admin.ModelAdmin):
@@ -106,9 +106,9 @@ class GeneratorAdmin(admin.ModelAdmin):
 @admin.register(MaintenanceRequest)
 class MaintenanceRequestAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'short_title', 'location', 
+        'reported_by', 'short_title', 'location', 
         'issue_type', 'priority', 'status', 
-        'reported_by', 'created_at', 'image'
+         'created_at', 'image'
     ]
     list_filter = ['status', 'priority', 'issue_type', 'block']
     search_fields = ['title', 'description', 'room__number']
@@ -124,8 +124,8 @@ class MaintenanceRequestAdmin(admin.ModelAdmin):
     
     def location(self, obj):
         parts = [f"Block {obj.block.code}"]
-        if obj.floor:
-            parts.append(f"Floor {obj.floor.number}")
+        # if obj.floor:
+        #     parts.append(f"Floor {obj.floor.number}")
         if obj.room:
             parts.append(f"Room {obj.room.number}")
         return " ".join(parts)

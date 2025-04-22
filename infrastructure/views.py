@@ -35,7 +35,7 @@ def report_issue(request):
     blocks = Block.objects.all()
     
     if request.method == "POST":
-        form = MaintenanceRequestForm(request.POST, user=request.user)
+        form = MaintenanceRequestForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
             maintenance_request = form.save(commit=False)
             maintenance_request.reported_by = request.user

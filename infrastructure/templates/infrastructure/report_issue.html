@@ -178,13 +178,13 @@
                   <div class="mb-4">
                     <div class="form-group">
                       <label
-                        for="{{ form.title.id_for_label }}"
+                        for="{{ form.problem.id_for_label }}"
                         class="form-label fw-medium"
-                        >Title*</label
+                        >Problem*</label
                       >
-                      {{ form.title }}
+                      {{ form.problem }}
                       <div class="invalid-feedback">
-                        {{ form.title.errors|striptags }}
+                        {{ form.problem.errors|striptags }}
                       </div>
                       <div class="form-text mt-1">
                         Brief summary of the problem (max 100 characters)
@@ -339,7 +339,7 @@
     // Initialize form fields with proper classes
     $("#{{ form.issue_type.id_for_label }}").addClass("form-select");
     $("#{{ form.priority.id_for_label }}").addClass("form-select");
-    $("#{{ form.title.id_for_label }}").addClass("form-control");
+    $("#{{ form.problem.id_for_label }}").addClass("form-control");
     $("#{{ form.description.id_for_label }}").addClass("form-control");
 
     // Character counter for description

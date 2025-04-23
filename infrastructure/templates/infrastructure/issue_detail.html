@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block title %}Issue #{{ issue.id }} Details{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <nav aria-label="breadcrumb">
+        <!-- <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'my_issues' %}" class="text-decoration-none">My Issues</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Issue #{{ issue.id }}</li>
+        </ol> -->
+      </nav>
+      <h2 class="fw-bold mb-0">Maintenance Request Details</h2>
+    </div>
+    <div>
+      <span class="badge bg-{% if issue.status == 'COMPLETED' %}success{% elif issue.status == 'IN_PROGRESS' %}primary{% else %}secondary{% endif %} bg-opacity-10 text-{% if issue.status == 'COMPLETED' %}success{% elif issue.status == 'IN_PROGRESS' %}primary{% else %}secondary{% endif %} me-2">
+        <i class="bi {% if issue.status == 'COMPLETED' %}bi-check-circle{% elif issue.status == 'IN_PROGRESS' %}bi-gear{% else %}bi-hourglass{% endif %}-fill me-1"></i>
+        {{ issue.get_status_display }}
+      </span>
+      <span class="badge bg-{% if issue.priority == 'HIGH' or issue.priority == 'CRIT' %}danger{% elif issue.priority == 'MED' %}warning{% else %}success{% endif %} bg-opacity-10 text-{% if issue.priority == 'HIGH' or issue.priority == 'CRIT' %}danger{% elif issue.priority == 'MED' %}warning{% else %}success{% endif %}">
+        <i class="bi {% if issue.priority == 'HIGH' or issue.priority == 'CRIT' %}bi-exclamation-triangle{% elif issue.priority == 'MED' %}bi-exclamation-circle{% else %}bi-check-circle{% endif %}-fill me-1"></i>
+        {{ issue.get_priority_display }}
+      </span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <h4 class="card-title fw-bold mb-0">{{ issue.title }}</h4>
+            <a href="{% url 'my_issues' %}" class="btn btn-outline-primary btn-sm">
+              <i class="bi bi-arrow-left me-1"></i> Back to My Issues
+            </a>
+          </div>
+          <div class="card-text bg-light p-3 rounded mb-3">
+            <p class="mb-0">{{ issue.description }}</p>
+          </div>
+          
+          {% if issue.image %}
+          <div class="mt-4">
+            <h5 class="fw-semibold mb-3">Attached Image</h5>
+            <div class="border rounded overflow-hidden">
+              <img src="{{ issue.image.url }}" alt="Issue image" class="img-fluid w-100">
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0">Request Details</h5>
+          <span class="badge bg-light text-dark">
+            <i class="bi bi-tag-fill me-1"></i>{{ issue.get_issue_type_display }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1 text-uppercase">Location</h6>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-building me-2 text-primary"></i>
+              <div>
+                <p class="mb-0 fw-medium">
+                  Block {{ issue.block.code }}
+                  {% if issue.floor %} - Floor {{ issue.floor.number }}{% endif %}
+                  {% if issue.room %} - Room {{ issue.room.number }}{% endif %}
+                </p>
+                {% if issue.room.name %}
+                <small class="text-muted">{{ issue.room.name }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% if issue.equipment %}
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1 text-uppercase">Related Equipment</h6>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-tools me-2 text-primary"></i>
+              <div>
+                <p class="mb-0 fw-medium">{{ issue.equipment.name }}</p>
+                <small class="text-muted">{{ issue.equipment.model_number }} • {{ issue.equipment.category }}</small>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1 text-uppercase">Reported By</h6>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-person-circle me-2 text-primary"></i>
+              <p class="mb-0 fw-medium">{{ issue.reported_by.get_full_name|default:issue.reported_by.username }}</p>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1 text-uppercase">Assigned To</h6>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-person-gear me-2 text-primary"></i>
+              <p class="mb-0 fw-medium">
+                {% if issue.assigned_to %}
+                  {{ issue.assigned_to.get_full_name|default:issue.assigned_to.username }}
+                {% else %}
+                  <span class="text-muted">Not assigned</span>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1 text-uppercase">Dates</h6>
+            <ul class="list-unstyled">
+              <li class="mb-1 d-flex align-items-center">
+                <i class="bi bi-calendar-event me-2 text-primary"></i>
+                <span class="fw-medium">Reported:</span>
+                <span class="ms-auto">{{ issue.created_at|date:"M d, Y H:i" }}</span>
+              </li>
+              {% if issue.completed_at %}
+              <li class="mb-1 d-flex align-items-center">
+                <i class="bi bi-calendar-check me-2 text-primary"></i>
+                <span class="fw-medium">Completed:</span>
+                <span class="ms-auto">{{ issue.completed_at|date:"M d, Y H:i" }}</span>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+
+          <div class="mt-4 pt-3 border-top text-center">
+            <a href="{% url 'my_issues' %}" class="btn btn-primary w-100">
+              <i class="bi bi-list-ul me-2"></i>View All My Requests
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card {
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .badge {
+    border-radius: 0.25rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  
+  .bg-opacity-10 {
+    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+  }
+  
+  .text-uppercase {
+    letter-spacing: 0.5px;
+  }
+</style>
+{% endblock %}

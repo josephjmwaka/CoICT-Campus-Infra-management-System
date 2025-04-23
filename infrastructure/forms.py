@@ -29,7 +29,7 @@ class MaintenanceRequestForm(forms.ModelForm):
         model = MaintenanceRequest
         fields = [
             'block', 'floor', 'room', 'equipment',
-            'issue_type', 'title', 'description', 'priority', 'image'
+            'issue_type', 'problem', 'description', 'priority', 'image'
         ]
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),

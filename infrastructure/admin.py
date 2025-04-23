@@ -106,21 +106,21 @@ class GeneratorAdmin(admin.ModelAdmin):
 @admin.register(MaintenanceRequest)
 class MaintenanceRequestAdmin(admin.ModelAdmin):
     list_display = [
-        'reported_by', 'short_title', 'location', 
+        'reported_by', 'short_problem', 'location', 
         'issue_type', 'priority', 'status', 
          'created_at', 'image'
     ]
     list_filter = ['status', 'priority', 'issue_type', 'block']
-    search_fields = ['title', 'description', 'room__number']
+    search_fields = ['problem', 'description', 'room__number']
     list_select_related = ['block', 'floor', 'room', 'reported_by']
     readonly_fields = ['created_at', 'updated_at']
     inlines = [MaintenanceLogInline]
     actions = ['mark_as_completed', 'mark_as_in_progress']
     date_hierarchy = 'created_at'
     
-    def short_title(self, obj):
-        return obj.title[:50] + "..." if len(obj.title) > 50 else obj.title
-    short_title.short_description = "Title"
+    def short_problem(self, obj):
+        return obj.problem[:50] + "..." if len(obj.problem) > 50 else obj.problem
+    short_problem.short_description = "Problem"
     
     def location(self, obj):
         parts = [f"Block {obj.block.code}"]
@@ -145,10 +145,10 @@ class MaintenanceRequestAdmin(admin.ModelAdmin):
 class MaintenanceLogAdmin(admin.ModelAdmin):
     list_display = ['request_link', 'technician', 'completion_date', 'labor_hours']
     list_filter = ['technician', 'completion_date']
-    search_fields = ['request__title', 'action_taken']
+    search_fields = ['request__problem', 'action_taken']
     readonly_fields = ['completion_date']
     
     def request_link(self, obj):
         url = reverse('admin:infrastructure_maintenancerequest_change', args=[obj.request.id])
-        return mark_safe(f'<a href="{url}">{obj.request.title}</a>')
+        return mark_safe(f'<a href="{url}">{obj.request.problem}</a>')
     request_link.short_description = "Maintenance Request"

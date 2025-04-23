@@ -129,8 +129,8 @@ class Equipment(models.Model):
     category = models.ForeignKey(EquipmentCategory, on_delete=models.PROTECT, related_name='equipment')
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='equipment')
     name = models.CharField(max_length=100)
-    model_number = models.CharField(max_length=50, blank=True)
-    serial_number = models.CharField(max_length=100, blank=True, unique=True)
+    model_number = models.CharField(max_length=50, blank=True, null=True)
+    serial_number = models.CharField(max_length=100, blank=True, null=True, unique=True)
     purchase_date = models.DateField(null=True, blank=True)
     warranty_expiry = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=EQUIPMENT_STATUS, default='OK')
@@ -191,11 +191,12 @@ class MaintenanceRequest(models.Model):
     ]
     
     ISSUE_TYPES = [
-        ('ELECTRICAL', 'Electrical'),
-        ('PLUMBING', 'Plumbing'),
-        ('HVAC', 'HVAC'),
-        ('STRUCTURAL', 'Structural'),
+        ('ELECTRICAL', 'Electrical issues'),
+        ('PLUMBING', 'Water or pipe-related issues'),
+        ('HVAC', 'heating, ventilation, and air conditioning problems'),
+        ('STRUCTURAL', 'Building structure issues'),
         ('EQUIPMENT', 'Equipment Failure'),
+        ('FURNITURE', 'Furniture-related issues'),
         ('OTHER', 'Other'),
     ]
     
@@ -226,8 +227,8 @@ class MaintenanceRequest(models.Model):
     )
     
     issue_type = models.CharField(max_length=15, choices=ISSUE_TYPES, default='EQUIPMENT')
-    title = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
+    problem = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
     priority = models.CharField(max_length=5, choices=PRIORITY_LEVELS, default='MED')
     status = models.CharField(max_length=15, choices=STATUS_FLOW, default='REPORTED')
     image = models.ImageField(upload_to="issue_images/", blank=True, null=True)

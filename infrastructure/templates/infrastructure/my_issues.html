@@ -17,7 +17,7 @@
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th class="ps-4">ID</th>
+              <th class="ps-4">#</th>
               <th>Location</th>
               <th>Issue</th>
               <th>Priority</th>
@@ -27,19 +27,19 @@
           </thead>
           <tbody>
             {% for issue in issues %}
-            <tr>
-              <td class="ps-4 fw-semibold">#{{ issue.id }}</td>
+            <tr onclick="window.location='{% url 'issue_detail' issue.id %}';" style="cursor: pointer;">
+              <td class="ps-4 fw-semibold">#{{ forloop.counter }}</td>
               <td>
                 <div class="d-flex flex-column">
                   <span class="fw-medium">{{ issue.block.code }}{% if issue.room %}{{ issue.room.number }}{% endif %}</span>
-                  <small class="text-muted">
+                  <!-- <small class="text-muted">
                     {% if issue.floor %}Floor {{ issue.floor.number }}{% endif %}
                     {% if issue.room %}{{ issue.room.name }}{% endif %}
-                  </small>
+                  </small> -->
                 </div>
               </td>
               <td>
-                <span class="fw-medium">{{ issue.title }}</span>
+                <span class="fw-medium">{{ issue.problem }}</span>
                 <small class="d-block text-muted text-truncate" style="max-width: 200px">
                   {{ issue.description }}
                 </small>
@@ -109,4 +109,11 @@
   </div>
   {% endif %}
 </div>
+
+<style>
+  /* Add hover effect for better UX */
+  tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+</style>
 {% endblock %}

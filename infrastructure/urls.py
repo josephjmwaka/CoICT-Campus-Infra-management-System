@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    home, report_issue, my_issues,
+    home, report_issue, my_issues, issue_detail,
     ajax_load_floors, ajax_load_rooms, ajax_load_equipment
 )
 
@@ -8,6 +8,7 @@ urlpatterns = [
     path('', home, name='home'),
     path('report/', report_issue, name='report_issue'),
     path('my-issues/', my_issues, name='my_issues'),
+    path('my-issues/<int:pk>/', issue_detail, name='issue_detail'),
     path('ajax/load-floors/', ajax_load_floors, name='ajax_load_floors'),
     path('ajax/load-rooms/', ajax_load_rooms, name='ajax_load_rooms'),
     path('ajax/load-equipment/', ajax_load_equipment, name='ajax_load_equipment'),

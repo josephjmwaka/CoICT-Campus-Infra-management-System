@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 import os
 
-@login_required
+# @login_required
 def home(request):
     blocks = Block.objects.all()
     if request.user.is_authenticated:
@@ -29,6 +29,12 @@ def home(request):
 def my_issues(request):
     issues = MaintenanceRequest.objects.filter(reported_by=request.user).order_by('-created_at')
     return render(request, "infrastructure/my_issues.html", {"issues": issues})
+
+
+@login_required
+def issue_detail(request, pk):
+    issue = get_object_or_404(MaintenanceRequest, pk=pk, reported_by=request.user)
+    return render(request, 'infrastructure/issue_detail.html', {'issue': issue})
 
 @login_required
 def report_issue(request):

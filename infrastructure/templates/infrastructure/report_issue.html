@@ -10,15 +10,42 @@
             >
               <i class="bi bi-exclamation-triangle-fill fs-4"></i>
             </div>
+            
             <div>
+              
               <h2 class="fw-bold mb-1">Report Maintenance Issue</h2>
               <p class="text-muted mb-0">
                 Help us maintain campus facilities by reporting problems
               </p>
             </div>
+
           </div>
         </div>
+            {% if form.non_field_errors %}
+<div class="alert alert-danger">
+  <strong>Error!</strong>
+  <ul>
+    {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
 
+{% if form.errors %}
+<div class="alert alert-danger">
+  <strong>Error!</strong> Please correct the following:
+  <ul>
+    {% for field, errors in form.errors.items %}
+      {% if field != '__all__' %}
+        {% for error in errors %}
+          <li>{{ field|title }}: {{ error }}</li>
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
         <div class="card-body p-4 p-md-5">
           <form
             method="post"
@@ -119,20 +146,100 @@
               </div>
               <div class="card border-0 bg-light-subtle">
                 <div class="card-body p-4">
-                  <div class="form-group">
-                    <label for="id_equipment" class="form-label fw-medium"
-                      >Equipment (if applicable)</label
+                  <div class="row g-3">
+                    <!-- Equipment Name -->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="id_equipment" class="form-label fw-medium"
+                          >Equipment Name*</label
+                        >
+                        <select
+                          name="equipment_name"
+                          id="id_equipment"
+                          class="form-select"
+                          required
+                          disabled
+                        >
+                          <option value="" selected disabled>
+                            Select Equipment
+                          </option>
+                        </select>
+                        <div class="invalid-feedback">
+                          Please select an equipment.
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Model Number (conditional) -->
+                    <div
+                      class="col-md-6"
+                      id="modelNumberContainer"
+                      style="display: none"
                     >
-                    <select
-                      name="equipment"
-                      id="id_equipment"
-                      class="form-select"
-                      disabled
+                      <div class="form-group">
+                        <label
+                          for="id_model_number"
+                          class="form-label fw-medium"
+                          >Model Number (if Known)</label
+                        >
+                        <select
+                          name="model_number"
+                          id="id_model_number"
+                          class="form-select"
+                          disabled
+                        >
+                          <option value="" selected disabled>
+                            Select Model Number
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Serial Number (conditional) -->
+                    <div
+                      class="col-md-6"
+                      id="serialNumberContainer"
+                      style="display: none"
                     >
-                      <option value="" selected disabled>
-                        Select Equipment
-                      </option>
-                    </select>
+                      <div class="form-group">
+                        <label
+                          for="id_serial_number"
+                          class="form-label fw-medium"
+                          >Serial Number (if known)</label
+                        >
+                        <select
+                          name="serial_number"
+                          id="id_serial_number"
+                          class="form-select"
+                          disabled
+                        >
+                          <option value="" selected disabled>
+                            Select Serial Number
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Number of Items (for unknown models/serials) -->
+                    <div
+                      class="col-md-6"
+                      id="quantityContainer"
+                      style="display: none"
+                    >
+                      <div class="form-group">
+                        <label for="id_quantity" class="form-label fw-medium"
+                          >Number of Items</label
+                        >
+                        <input
+                          type="number"
+                          name="quantity"
+                          id="id_quantity"
+                          class="form-control"
+                          min="1"
+                          value="1"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -431,6 +538,10 @@
         equipmentSelect
           .html('<option value="" selected disabled>Select Equipment</option>')
           .prop("disabled", true);
+        $("#id_model_number, #id_serial_number").prop("disabled", true);
+        $(
+          "#modelNumberContainer, #serialNumberContainer, #quantityContainer"
+        ).hide();
         return;
       }
 
@@ -453,6 +564,50 @@
           equipmentSelect.html(
             '<option value="" selected disabled>Error loading equipment</option>'
           );
+        },
+      });
+    });
+
+    // When equipment is selected, load model and serial numbers
+    $("#id_equipment").change(function () {
+      const roomId = $("#id_room").val();
+      const equipmentName = $(this).val();
+
+      if (!roomId || !equipmentName) {
+        $("#id_model_number, #id_serial_number").prop("disabled", true);
+        $("#modelNumberContainer, #serialNumberContainer").hide();
+        $("#quantityContainer").show();
+        return;
+      }
+
+      $.ajax({
+        url: "{% url 'ajax_load_equipment_details' %}",
+        data: {
+          room: roomId,
+          equipment: equipmentName,
+        },
+        success: function (response) {
+          if (response.html) {
+            const parts = $(response.html);
+            const modelOptions = parts.filter("#model-options").html();
+            const serialOptions = parts.filter("#serial-options").html();
+
+            $("#id_model_number").html(modelOptions).prop("disabled", false);
+            $("#id_serial_number").html(serialOptions).prop("disabled", false);
+
+            $(
+              "#modelNumberContainer, #serialNumberContainer, #quantityContainer"
+            ).show();
+          } else {
+            console.error("Invalid response format:", response);
+            $("#modelNumberContainer, #serialNumberContainer").hide();
+            $("#quantityContainer").show();
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error loading equipment details:", error);
+          $("#modelNumberContainer, #serialNumberContainer").hide();
+          $("#quantityContainer").show();
         },
       });
     });
@@ -517,9 +672,9 @@
     })();
   });
   // Show filename when file is selected
-    document.getElementById('id_image').addEventListener('change', function(e) {
-        const fileName = e.target.files[0]?.name || 'No file chosen';
-        document.querySelector('.file-upload-text').textContent = fileName;
-    });
+  document.getElementById("id_image").addEventListener("change", function (e) {
+    const fileName = e.target.files[0]?.name || "No file chosen";
+    document.querySelector(".file-upload-text").textContent = fileName;
+  });
 </script>
 {% endblock %}

@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.db.models import Q
 from django.core.mail import send_mail
 import os
 
@@ -45,9 +46,28 @@ def report_issue(request):
         if form.is_valid():
             maintenance_request = form.save(commit=False)
             maintenance_request.reported_by = request.user
-            maintenance_request.save()
             
-            # Send email notification
+            # Handle equipment assignment
+            equipment_name = form.cleaned_data.get('equipment_name')
+            model_number = form.cleaned_data.get('model_number')
+            serial_number = form.cleaned_data.get('serial_number')
+            room = form.cleaned_data.get('room')
+            
+            if equipment_name:
+                if model_number or serial_number:
+                    try:
+                        equipment = Equipment.objects.get(
+                            room=room,
+                            name=equipment_name,
+                            model_number=model_number,
+                            serial_number=serial_number
+                        )
+                        maintenance_request.equipment = equipment
+                    except Equipment.DoesNotExist:
+                        pass
+                
+            
+            maintenance_request.save()
             send_mail(
                 subject="Issue Report Submitted",
                 message=f"Dear {request.user.username},\n\nYour issue report has been successfully submitted. Our team will review it soon.",
@@ -55,9 +75,13 @@ def report_issue(request):
                 recipient_list=[os.getenv('MAIL_HOST_USER')], #valid email just for testing should be [request.user.email]
                 fail_silently=False,
             )
-            
             messages.success(request, "Your maintenance request has been submitted successfully!")
             return redirect('home')
+        else:
+            # Add form errors to messages
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
         form = MaintenanceRequestForm(user=request.user)
     
@@ -111,8 +135,45 @@ def ajax_load_equipment(request):
         return JsonResponse({'html': '<option value="">Select Equipment</option>'})
     
     try:
-        equipment = Equipment.objects.filter(room_id=room_id).order_by('name')
-        html = render_to_string('infrastructure/equipment_dropdown_options.html', {'equipment': equipment})
+        # Get distinct equipment names in this room
+        equipment_names = Equipment.objects.filter(room_id=room_id)\
+                               .order_by('name')\
+                               .values_list('name', flat=True)\
+                               .distinct()
+        
+        context = {'equipment_names': equipment_names}
+        html = render_to_string('infrastructure/equipment_dropdown_options.html', context)
         return JsonResponse({'html': html})
     except Exception as e:
-        return JsonResponse({'html': '<option value="">Error loading equipment</option>'})
+        return JsonResponse({'html': f'<option value="">Error loading equipment</option>'})
+    
+def ajax_load_equipment_details(request):
+    room_id = request.GET.get('room')
+    equipment_name = request.GET.get('equipment')
+    
+    if not room_id or not equipment_name:
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+    
+    try:
+        # Get all models and serials for this equipment name in the room
+        equipments = Equipment.objects.filter(
+            room_id=room_id,
+            name=equipment_name
+        ).exclude(
+            Q(model_number__isnull=True) | Q(model_number__exact='') |
+            Q(serial_number__isnull=True) | Q(serial_number__exact='')
+        )
+        
+        models = list(set(e.model_number for e in equipments if e.model_number))
+        serials = list(set(e.serial_number for e in equipments if e.serial_number))
+        
+        context = {
+            'models': models,
+            'serials': serials
+        }
+        
+        html = render_to_string('infrastructure/ajax_load_equipment_details.html', context)
+        return JsonResponse({'html': html})
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

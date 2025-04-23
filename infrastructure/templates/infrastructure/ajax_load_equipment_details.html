@@ -1,0 +1,21 @@
+<div id="model-options">
+{% if models %}
+<option value="">Select Model Number</option>
+{% for model in models %}
+<option value="{{ model }}">{{ model }}</option>
+{% endfor %}
+{% else %}
+<option value="">No model numbers available</option>
+{% endif %}
+</div>
+
+<div id="serial-options">
+{% if serials %}
+<option value="">Select Serial Number</option>
+{% for serial in serials %}
+<option value="{{ serial }}">{{ serial }}</option>
+{% endfor %}
+{% else %}
+<option value="">No serial numbers available</option>
+{% endif %}
+</div>

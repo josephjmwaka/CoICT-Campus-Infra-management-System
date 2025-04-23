@@ -228,6 +228,9 @@ class MaintenanceRequest(models.Model):
     
     issue_type = models.CharField(max_length=15, choices=ISSUE_TYPES, default='EQUIPMENT')
     problem = models.CharField(max_length=200)
+    model_number = models.CharField(max_length=50, blank=True, null=True)
+    serial_number = models.CharField(max_length=100, blank=True, null=True)
+    quantity = models.PositiveIntegerField(default=1)
     description = models.TextField(blank=True, null=True)
     priority = models.CharField(max_length=5, choices=PRIORITY_LEVELS, default='MED')
     status = models.CharField(max_length=15, choices=STATUS_FLOW, default='REPORTED')

@@ -77,25 +77,25 @@ def report_issue(request):
                 # If only model number provided
                 elif model_number:
                     # Assign the first matching equipment (or could create a relation table)
-                    equipment = Equipment.objects.filter(
-                        room=room,
-                        name=equipment_name,
-                        model_number=model_number
-                    ).first()
-                    if equipment:
-                        maintenance_request.equipment = equipment
-                        maintenance_request.quantity = quantity
+                    # equipment = Equipment.objects.filter(
+                    #     room=room,
+                    #     name=equipment_name,
+                    #     model_number=model_number
+                    # ).first()
+                    # if equipment:
+                    # maintenance_request.equipment = equipment
+                    maintenance_request.quantity = quantity
                 else:
                     maintenance_request.quantity = quantity
                         
                 maintenance_request.save()
-                send_mail(
-                subject="Issue Report Submitted",
-                message=f"Dear {request.user.username},\n\nYour issue report has been successfully submitted. Our team will review it soon.",
-                from_email=os.getenv('MAIL_HOST_USER'),
-                recipient_list=[os.getenv('MAIL_HOST_USER')], #valid email just for testing should be [request.user.email]
-                fail_silently=False,
-                )
+                # send_mail(
+                # subject="Issue Report Submitted",
+                # message=f"Dear {request.user.username},\n\nYour issue report has been successfully submitted. Our team will review it soon.",
+                # from_email=os.getenv('MAIL_HOST_USER'),
+                # recipient_list=[os.getenv('MAIL_HOST_USER')], #valid email just for testing should be [request.user.email]
+                # fail_silently=False,
+                # )
                 
                 messages.success(request, "Your maintenance request has been submitted successfully!")
                 return redirect('home')
@@ -161,7 +161,6 @@ def ajax_load_equipment(request):
                                .order_by('name')\
                                .values_list('name', flat=True)\
                                .distinct()
-        
         context = {'equipment_names': equipment_names}
         html = render_to_string('infrastructure/equipment_dropdown_options.html', context)
         return JsonResponse({'html': html})

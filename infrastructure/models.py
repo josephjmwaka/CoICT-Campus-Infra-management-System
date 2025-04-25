@@ -85,7 +85,7 @@ class Room(models.Model):
         ordering = ['block', 'number']
         
     def __str__(self):
-        return f"{self.block.code}{self.number} - {self.name}"
+        return f"{self.block.code}{self.number}"
     
     def save(self, *args, **kwargs):
         # Special handling for Block E's generator room
@@ -225,7 +225,7 @@ class MaintenanceRequest(models.Model):
         blank=True,
         related_name='assigned_requests'
     )
-    
+    equipment_name = models.CharField(max_length=100, blank=True, null=True)
     issue_type = models.CharField(max_length=15, choices=ISSUE_TYPES, default='EQUIPMENT')
     problem = models.CharField(max_length=200)
     model_number = models.CharField(max_length=50, blank=True, null=True)
@@ -244,6 +244,11 @@ class MaintenanceRequest(models.Model):
         ordering = ['-priority', 'block', 'room']
         verbose_name = "Maintenance Request"
         verbose_name_plural = "Maintenance Requests"
+        
+    def save(self, *args, **kwargs):
+        if self.equipment and not self.equipment_name:
+            self.equipment_name = self.equipment.name
+        super().save(*args, **kwargs)
         
     def __str__(self):
         return f"{self.get_issue_type_display()} issue in {self.room} ({self.get_status_display()})"

@@ -214,11 +214,21 @@
                           type="number"
                           name="quantity"
                           id="id_quantity"
-                          class="form-control"
+                          class="form-control {% if form.quantity.errors %}is-invalid{% endif %}"
                           min="1"
-                          value="1"
+                          value="{{ form.quantity.value|default:'1' }}"
                         />
-                        <small id="quantity-help-text" class="form-text text-muted"></small>
+                        <small
+                          id="quantity-help-text"
+                          class="form-text text-muted"
+                        ></small>
+                        {% if form.quantity.errors %}
+                            <div class="invalid-feedback">
+                            {% for error in form.quantity.errors %}
+                              {{ error }}
+                            {% endfor %}
+                            </div>
+                        {% endif %}
                       </div>
                     </div>
                   </div>
@@ -608,6 +618,27 @@
         $("#id_quantity").prop("disabled", false);
       }
     });
+
+    // Function to validate quantity in real-time
+    function validateQuantity() {
+      const quantityInput = $("#id_quantity");
+      const helpText = $("#quantity-help-text");
+      const value = parseInt(quantityInput.val());
+
+      if (isNaN(value) || value < 1) {
+        quantityInput.addClass("is-invalid");
+        helpText.text("").addClass("text-danger");
+        helpText.text("Quantity must be at least 1");
+      } else {
+        quantityInput.removeClass("is-invalid");
+        helpText.removeClass("text-danger");
+        // Update available count
+        updateEquipmentCount();
+      }
+    }
+
+    // Call this when quantity changes
+    $("#id_quantity").on("input", validateQuantity);
 
     // Function to update available count
     function updateEquipmentCount() {

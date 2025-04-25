@@ -80,6 +80,14 @@ class MaintenanceRequestForm(forms.ModelForm):
                 cleaned_data['total_available'] = total_available
 
         return cleaned_data
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if not instance.equipment and 'equipment_name' in self.cleaned_data:
+            instance.equipment_name = self.cleaned_data['equipment_name']
+        if commit:
+            instance.save()
+        return instance
 
 class EquipmentForm(forms.ModelForm):
     class Meta:

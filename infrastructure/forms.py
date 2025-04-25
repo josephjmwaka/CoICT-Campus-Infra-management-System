@@ -3,6 +3,7 @@ from .models import MaintenanceRequest, Equipment, Room, Block, Floor
 class MaintenanceRequestForm(forms.ModelForm):
     equipment_name = forms.CharField(required=True, widget=forms.HiddenInput())  # Changed to required=True
     
+    
     class Meta:
         model = MaintenanceRequest
         fields = [
@@ -35,18 +36,48 @@ class MaintenanceRequestForm(forms.ModelForm):
         
         if not equipment_name:
             self.add_error('equipment_name', 'Please select an equipment')
-            return cleaned_data  # Return early if no equipment selected
+            return cleaned_data
         
-        if model_number or serial_number:
-            if not Equipment.objects.filter(
-                room=room,
-                name=equipment_name,
-                model_number=model_number,
-                serial_number=serial_number
-            ).exists():
-                self.add_error(None, 'No matching equipment found with these details')
-        elif not quantity or quantity < 1:
-            self.add_error('quantity', 'Please specify a valid quantity (at least 1)')
+        # Get base queryset for all matching equipment
+        equipments = Equipment.objects.filter(
+            room=room,
+            name=equipment_name
+        )
+        
+        # Case 1: Serial number provided (must be unique)
+        if serial_number:
+            try:
+                equipment = equipments.get(serial_number=serial_number)
+                cleaned_data['equipment'] = equipment
+                cleaned_data['quantity'] = 1  # Serial numbers are unique
+            except Equipment.DoesNotExist:
+                self.add_error('serial_number', 'No equipment found with this serial number')
+        
+        # Case 2: Model number provided (can have multiple)
+        elif model_number:
+            matching_equipment = equipments.filter(model_number=model_number)
+            total_available = matching_equipment.count()
+            
+            if total_available == 0:
+                self.add_error('model_number', 'No equipment found with this model number')
+            elif not quantity or quantity < 1:
+                self.add_error('quantity', 'Please specify a valid quantity (at least 1)')
+            elif quantity > total_available:
+                self.add_error('quantity', 
+                            f'Only {total_available} available with this model number')
+            else:
+                cleaned_data['total_available'] = total_available
+        
+        # Case 3: Neither provided - validate against total equipment count
+        else:
+            total_available = equipments.count()
+            if not quantity or quantity < 1:
+                self.add_error('quantity', 'Please specify a valid quantity (at least 1)')
+            elif quantity > total_available:
+                self.add_error('quantity', 
+                            f'Only {total_available} available of this equipment')
+            else:
+                cleaned_data['total_available'] = total_available
 
         return cleaned_data
 

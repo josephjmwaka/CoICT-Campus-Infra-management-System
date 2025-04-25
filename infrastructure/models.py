@@ -142,7 +142,7 @@ class Equipment(models.Model):
         ordering = ['room', 'name']
     
     def __str__(self):
-        return f"{self.name} ({self.model_number}) in {self.room}"
+        return f"{self.name}"
 
 class Generator(models.Model):
     """Specialized equipment for the campus generator"""

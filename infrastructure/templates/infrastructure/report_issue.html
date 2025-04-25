@@ -10,42 +10,26 @@
             >
               <i class="bi bi-exclamation-triangle-fill fs-4"></i>
             </div>
-            
+
             <div>
-              
               <h2 class="fw-bold mb-1">Report Maintenance Issue</h2>
               <p class="text-muted mb-0">
                 Help us maintain campus facilities by reporting problems
               </p>
             </div>
-
           </div>
         </div>
-            {% if form.non_field_errors %}
-<div class="alert alert-danger">
-  <strong>Error!</strong>
-  <ul>
-    {% for error in form.non_field_errors %}
-      <li>{{ error }}</li>
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          <strong>Error!</strong>
+          <ul>
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
 
-{% if form.errors %}
-<div class="alert alert-danger">
-  <strong>Error!</strong> Please correct the following:
-  <ul>
-    {% for field, errors in form.errors.items %}
-      {% if field != '__all__' %}
-        {% for error in errors %}
-          <li>{{ field|title }}: {{ error }}</li>
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
         <div class="card-body p-4 p-md-5">
           <form
             method="post"
@@ -221,11 +205,7 @@
                     </div>
 
                     <!-- Number of Items (for unknown models/serials) -->
-                    <div
-                      class="col-md-6"
-                      id="quantityContainer"
-                      style="display: none"
-                    >
+                    <div class="col-md-6" id="quantityContainer">
                       <div class="form-group">
                         <label for="id_quantity" class="form-label fw-medium"
                           >Number of Items</label
@@ -238,6 +218,7 @@
                           min="1"
                           value="1"
                         />
+                        <small id="quantity-help-text" class="form-text text-muted"></small>
                       </div>
                     </div>
                   </div>
@@ -611,6 +592,51 @@
         },
       });
     });
+
+    // When serial number is selected, disable quantity field
+    $(document).on("change", "#id_serial_number", function () {
+      if ($(this).val()) {
+        $("#id_quantity").val(1).prop("disabled", true);
+      } else {
+        $("#id_quantity").prop("disabled", false);
+      }
+    });
+
+    // When model number is selected, enable quantity field if no serial number
+    $(document).on("change", "#id_model_number", function () {
+      if ($(this).val() && !$("#id_serial_number").val()) {
+        $("#id_quantity").prop("disabled", false);
+      }
+    });
+
+    // Function to update available count
+    function updateEquipmentCount() {
+      const roomId = $("#id_room").val();
+      const equipmentName = $("#id_equipment").val();
+      const modelNumber = $("#id_model_number").val();
+
+      if (roomId && equipmentName) {
+        $.ajax({
+          url: "{% url 'ajax_get_equipment_count' %}",
+          data: {
+            room: roomId,
+            name: equipmentName,
+            model: modelNumber,
+          },
+          success: function (response) {
+            if (response.count !== undefined) {
+              const helpText = modelNumber
+                ? `${response.count} available with this model number`
+                : `${response.count} total available`;
+              $("#quantity-help-text").text(helpText);
+            }
+          },
+        });
+      }
+    }
+
+    // Call when relevant fields change
+    $("#id_room, #id_equipment, #id_model_number").change(updateEquipmentCount);
 
     function loadRooms(blockId, floorId) {
       const roomSelect = $("#id_room");

@@ -44,50 +44,71 @@ def report_issue(request):
     if request.method == "POST":
         form = MaintenanceRequestForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            maintenance_request = form.save(commit=False)
-            maintenance_request.reported_by = request.user
-            
-            # Handle equipment assignment
-            equipment_name = form.cleaned_data.get('equipment_name')
-            model_number = form.cleaned_data.get('model_number')
-            serial_number = form.cleaned_data.get('serial_number')
-            room = form.cleaned_data.get('room')
-            
-            if equipment_name:
-                if model_number or serial_number:
-                    try:
-                        equipment = Equipment.objects.get(
-                            room=room,
-                            name=equipment_name,
-                            model_number=model_number,
-                            serial_number=serial_number
-                        )
-                        maintenance_request.equipment = equipment
-                    except Equipment.DoesNotExist:
-                        pass
+            try:
+                maintenance_request = form.save(commit=False)
+                maintenance_request.reported_by = request.user
                 
-            
-            maintenance_request.save()
-            send_mail(
+                # Handle equipment assignment
+                equipment_name = form.cleaned_data['equipment_name']
+                model_number = form.cleaned_data.get('model_number')
+                serial_number = form.cleaned_data.get('serial_number')
+                room = form.cleaned_data['room']
+                quantity = form.cleaned_data.get('quantity', 1)
+                
+                if model_number and serial_number:
+                    equipment = Equipment.objects.get(
+                        room=room,
+                        name=equipment_name,
+                        model_number=model_number,
+                        serial_number=serial_number
+                    )
+                    maintenance_request.equipment = equipment
+                
+                # If serial number provided
+                elif serial_number:
+                    equipment = Equipment.objects.get(
+                        room=room,
+                        name=equipment_name,
+                        serial_number=serial_number
+                    )
+                    maintenance_request.equipment = equipment
+                    maintenance_request.quantity = 1
+                
+                # If only model number provided
+                elif model_number:
+                    # Assign the first matching equipment (or could create a relation table)
+                    equipment = Equipment.objects.filter(
+                        room=room,
+                        name=equipment_name,
+                        model_number=model_number
+                    ).first()
+                    if equipment:
+                        maintenance_request.equipment = equipment
+                        maintenance_request.quantity = quantity
+                else:
+                    maintenance_request.quantity = quantity
+                        
+                maintenance_request.save()
+                send_mail(
                 subject="Issue Report Submitted",
                 message=f"Dear {request.user.username},\n\nYour issue report has been successfully submitted. Our team will review it soon.",
                 from_email=os.getenv('MAIL_HOST_USER'),
                 recipient_list=[os.getenv('MAIL_HOST_USER')], #valid email just for testing should be [request.user.email]
                 fail_silently=False,
-            )
-            messages.success(request, "Your maintenance request has been submitted successfully!")
-            return redirect('home')
-        else:
-            # Add form errors to messages
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
+                )
+                
+                messages.success(request, "Your maintenance request has been submitted successfully!")
+                return redirect('home')
+            except Equipment.DoesNotExist:
+                form.add_error(None, 'The specified equipment was not found')
+            except Exception as e:
+                form.add_error(None, f'An error occurred: {str(e)}')
     else:
         form = MaintenanceRequestForm(user=request.user)
     
     return render(request, "infrastructure/report_issue.html", {
         "form": form,
-        "blocks": blocks
+        "blocks": blocks,
     })
 
 def ajax_load_floors(request):
@@ -175,5 +196,27 @@ def ajax_load_equipment_details(request):
         html = render_to_string('infrastructure/ajax_load_equipment_details.html', context)
         return JsonResponse({'html': html})
         
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def ajax_get_equipment_count(request):
+    room_id = request.GET.get('room')
+    equipment_name = request.GET.get('name')
+    model_number = request.GET.get('model')
+    
+    if not room_id or not equipment_name:
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+    
+    try:
+        equipments = Equipment.objects.filter(
+            room_id=room_id,
+            name=equipment_name
+        )
+        
+        if model_number:
+            equipments = equipments.filter(model_number=model_number)
+        
+        count = equipments.count()
+        return JsonResponse({'count': count})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

@@ -19,6 +19,7 @@
             <tr>
               <th class="ps-4">#</th>
               <th>Location</th>
+              <th>Equipment</th>
               <th>Issue</th>
               <th>Priority</th>
               <th>Status</th>
@@ -37,6 +38,12 @@
                     {% if issue.room %}{{ issue.room.name }}{% endif %}
                   </small> -->
                 </div>
+              </td>
+              <td>
+                <span class="fw-medium">{{ issue.equipment }}</span>
+                <small class="d-block text-muted"
+                  >Qty: {{ issue.quantity }}</small
+                >
               </td>
               <td>
                 <span class="fw-medium">{{ issue.problem }}</span>

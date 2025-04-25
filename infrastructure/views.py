@@ -89,13 +89,13 @@ def report_issue(request):
                     maintenance_request.quantity = quantity
                         
                 maintenance_request.save()
-                # send_mail(
-                # subject="Issue Report Submitted",
-                # message=f"Dear {request.user.username},\n\nYour issue report has been successfully submitted. Our team will review it soon.",
-                # from_email=os.getenv('MAIL_HOST_USER'),
-                # recipient_list=[os.getenv('MAIL_HOST_USER')], #valid email just for testing should be [request.user.email]
-                # fail_silently=False,
-                # )
+                send_mail(
+                subject="Issue Report Submitted",
+                message=f"Dear {request.user.username},\n\nYour issue report has been successfully submitted. Our team will review it soon.",
+                from_email=os.getenv('MAIL_HOST_USER'),
+                recipient_list=[os.getenv('MAIL_HOST_USER')], #valid email just for testing should be [request.user.email]
+                fail_silently=False,
+                )
                 
                 messages.success(request, "Your maintenance request has been submitted successfully!")
                 return redirect('home')

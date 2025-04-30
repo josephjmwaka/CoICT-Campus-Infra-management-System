@@ -18,7 +18,7 @@ def login_view(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request, 'Invalid credentials')
+            messages.error(request, 'Invalid credentials',  extra_tags='invalid')
     return render(request, 'accounts/login.html')
 
 def logout_view(request):

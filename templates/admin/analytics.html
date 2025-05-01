@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<!-- Load your external CSS file -->
+<link rel="stylesheet" href="{% static 'css/admin/admin-custom.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/analytics.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+<div class="analytics-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="analytics-title">Infrastructure Analytics Dashboard</h1>
+                <p class="analytics-subtitle">Comprehensive system performance overview</p>
+            </div>
+            <a href="../" class="back-btn">
+                <i class="fas fa-chevron-left"></i> BACK TO ADMIN
+            </a>
+        </div>
+    </div>
+    
+    <div class="chart-grid">
+        <!-- Status Chart -->
+        <div class="chart-card pie-chart">
+            <div class="chart-header">
+                <h2 class="chart-title">Request Status Distribution</h2>
+            </div>
+            {{ status_chart|safe }}
+        </div>
+        
+        <!-- Priority Chart -->
+        <div class="chart-card bar-chart">
+            <div class="chart-header">
+                <h2 class="chart-title">Request Priority Levels</h2>
+            </div>
+            {{ priority_chart|safe }}
+        </div>
+        
+        <!-- Equipment Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h2 class="chart-title">Equipment Status</h2>
+            </div>
+            {{ equipment_chart|safe }}
+        </div>
+        
+        <!-- Block Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h2 class="chart-title">Requests by Block</h2>
+            </div>
+            {{ block_chart|safe }}
+        </div>
+        
+        
+        <!-- Timeseries Chart (Full Width) -->
+        <div class="chart-card chart-full-width line-chart">
+            <div class="chart-header">
+                <h2 class="chart-title">Requests Over Time</h2>
+            </div>
+            {{ timeseries_chart|safe }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<!-- Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}

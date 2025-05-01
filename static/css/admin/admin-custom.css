@@ -1,3 +1,5 @@
+/* admin-custom.css - Global admin styles */
+
 /* Main admin theming */
 :root {
   --primary: #4e73df;
@@ -70,30 +72,24 @@
 }
 
 .sidebar-dark-primary .nav-header {
-    color: #9e9e9e !important; /* Gray for section titles */
+    color: #9e9e9e !important;
     font-size: 0.8rem !important;
     text-transform: uppercase !important;
     font-weight: bold;
 }
 
-
-/* ========================
-   ADMIN HEADER & LOGO 
-======================== */
-/* Logo container */
+/* Header & Logo */
 .brand-link {
-    background-color: #0a66ff !important; /* Match your theme */
+    background-color: #0a66ff !important;
 }
-/* Logo image */
 .brand-image {
     height: 33px !important;
     width: auto !important;
     margin-left: 0.5rem !important;
     opacity: 1 !important;
-    filter: none !important; /* Remove default grayscale */
+    filter: none !important;
     background-color: #0a66ff;
 }
-/* Logo text */
 .brand-text {
     font-weight: bold !important;
     transition: color 0.3s ease !important;
@@ -107,9 +103,9 @@
     color: var(--light) !important;
 }
 
-/* Header title (site_header) */
+/* Hide default header title */
 .main-header .navbar-brand {
-    display: none !important; /* Hide if using logo instead */
+    display: none !important;
 }
 
 /* Mobile responsiveness */
@@ -121,4 +117,3 @@
         height: 30px !important;
     }
 }
-

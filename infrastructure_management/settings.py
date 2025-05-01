@@ -81,7 +81,7 @@ JAZZMIN_SETTINGS = {
     "copyright": "College Infrastructure Management",
     
     # UI theming
-    "custom_css": "css/admin-custom.css",
+    "custom_css": "css/admin/admin-custom.css",
     
     # Change view settings to match your theme
     "theme": "default",
@@ -93,11 +93,25 @@ JAZZMIN_SETTINGS = {
     "related_modal_active": True,
     
     # Custom icons
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
-    },
+   "icons": {
+    # Authentication
+    "auth": "fas fa-users-cog",
+    "auth.user": "fas fa-user",
+    "auth.Group": "fas fa-users",
+    
+    # Infrastructure models
+    "infrastructure.Block": "fas fa-building",
+    "infrastructure.Floor": "fas fa-layer-group",
+    "infrastructure.Room": "fas fa-door-open",
+    "infrastructure.Equipment": "fas fa-laptop",
+    "infrastructure.EquipmentCategory": "fas fa-tags",  # or "fas fa-list-alt"
+    "infrastructure.Generator": "fas fa-bolt",  # or "fas fa-power-off"
+    "infrastructure.MaintenanceRequest": "fas fa-tools",
+    "infrastructure.MaintenanceLog": "fas fa-clipboard-list",  # or "fas fa-history"
+    
+    # Accounts (if you want to add)
+    "accounts.UserProfile": "fas fa-id-card",
+},
         'custom_template': {
         'login': 'admin/login.html',
     }

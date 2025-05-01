@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from .models import UserProfile
+from infrastructure.admin import custom_admin_site
 
 # Option 1: Inline admin for UserProfile
 class UserProfileInline(admin.StackedInline):
@@ -30,6 +31,10 @@ class CustomUserAdmin(UserAdmin):
         return super().get_inline_instances(request, obj)
 
 
-# registering  models
-admin.site.unregister(User)  # Unregister the default User admin
-admin.site.register(User, CustomUserAdmin)  # Register User with our custom admin
+custom_admin_site.register(User, CustomUserAdmin)  # Register User with our custom admin
+
+# register UserProfile separately for direct access
+@admin.register(UserProfile, site=custom_admin_site)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'phone_number', 'department')
+    search_fields = ('user__username', 'phone_number', 'department')

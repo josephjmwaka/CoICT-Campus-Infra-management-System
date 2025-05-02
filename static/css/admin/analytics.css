@@ -149,11 +149,11 @@
     .chart-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
-        padding: 0 15px;
+        /* padding: 0 15px; */
     }
     
     .chart-card {
-        min-width: 150%;
+        min-width: 120%;
         margin: 0;
         padding: 1rem;
         box-sizing: border-box;

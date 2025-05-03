@@ -26,7 +26,7 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = os.getenv('MAIL_PORT')
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('MAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('MAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = os.getenv('MAIL_HOST_PASS')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -155,9 +155,9 @@ WSGI_APPLICATION = 'infrastructure_management.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE'),
+        'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('USER'),
-        'PASSWORD': os.getenv('SECRET_KEY'),
+        'PASSWORD': os.getenv('BD_PASS'),
         'HOST': 'localhost',  
         'PORT': os.getenv('PORT'),  
     }

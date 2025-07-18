@@ -12,16 +12,17 @@ from .serializers import (
     BlockSerializer, FloorSerializer, RoomSerializer,
     EquipmentCategorySerializer, EquipmentSerializer,
     GeneratorSerializer, MaintenanceRequestSerializer,
-    MaintenanceLogSerializer
+    MaintenanceLogSerializer, 
+    MaintenanceSummarySerializer
 )
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    permission_classes = [AllowAny]
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
@@ -174,3 +175,26 @@ class MaintenanceLogViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(technician=self.request.user)
+        
+
+
+class MaintenanceSummaryViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request):
+        # Get the requests reported by the authenticated user
+        user_requests = MaintenanceRequest.objects.filter(reported_by=request.user)
+        completed_requests = user_requests.filter(status='COMPLETED')
+        in_progress_requests = user_requests.filter(status='IN_PROGRESS')
+
+        # Prepare the summary data
+        summary_data = {
+            'total_requests': user_requests.count(),
+            'completed_requests': completed_requests.count(),
+            'in_progress_requests': in_progress_requests.count(),
+        }
+
+        # Serialize the summary data using the MaintenanceSummarySerializer
+        serializer = MaintenanceSummarySerializer(summary_data)
+
+        return Response(serializer.data)

@@ -6,7 +6,9 @@ from .models import UserProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -24,7 +26,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
-
+@csrf_exempt
 def register_view(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)

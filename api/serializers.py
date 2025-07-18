@@ -27,10 +27,18 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name']
 
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)  # securely hash the password
+        user.save()
+        return user
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     
@@ -181,3 +189,10 @@ class MaintenanceLogSerializer(serializers.ModelSerializer):
         model = MaintenanceLog
         fields = '__all__'
         read_only_fields = ['completion_date']
+        
+   
+
+class MaintenanceSummarySerializer(serializers.Serializer):
+    total_requests = serializers.IntegerField()
+    completed_requests = serializers.IntegerField()
+    in_progress_requests = serializers.IntegerField()

@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from .views import (
-    UserViewSet, UserProfileViewSet,
+    MaintenanceSummaryViewSet, UserViewSet, UserProfileViewSet,
     BlockViewSet, FloorViewSet, RoomViewSet,
     EquipmentCategoryViewSet, EquipmentViewSet,
     GeneratorViewSet, MaintenanceRequestViewSet,
@@ -27,6 +27,7 @@ router.register(r'equipment-categories', EquipmentCategoryViewSet)
 router.register(r'equipment', EquipmentViewSet)
 router.register(r'generators', GeneratorViewSet)
 router.register(r'maintenance-requests', MaintenanceRequestViewSet)
+router.register(r'maintenance-summary', MaintenanceSummaryViewSet, basename='maintenance-summary')
 router.register(r'maintenance-logs', MaintenanceLogViewSet)
 
 schema_view = get_schema_view(
@@ -49,4 +50,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    # path('user/', include('accounts.urls')), 
 ]

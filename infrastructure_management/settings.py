@@ -119,10 +119,10 @@ JAZZMIN_SETTINGS = {
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -213,6 +213,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Add this line
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+     'http://localhost:5173',
+ ]
+# CSRF_COOKIE_SECURE = True  # Uncomment this in production
+# CSRF_COOKIE_SAMESITE = 'None'  # Uncomment this in production
+
+
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
